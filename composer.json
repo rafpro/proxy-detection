@@ -12,11 +12,6 @@
             "name": "Rob Allen",
             "email": "rob@akrabat.com",
             "homepage": "http://akrabat.com"
-        },
-        {
-            "name": "Welling Guzmán",
-            "email": "hola@wellingguzman.com",
-            "homepage": "http://wellingguzman.com"
         }
     ],
     "require": {
@@ -30,7 +25,7 @@
     },
     "autoload": {
         "psr-4": {
-            "WellingGuzman\\Middleware\\": "src"
+            "RKA\\Middleware\\": "src"
         }
     }
 }

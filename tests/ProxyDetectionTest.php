@@ -1,8 +1,8 @@
 <?php
-namespace WellingGuzman\Middleware\Test;
+namespace RKA\Middleware\Test;
 
 use PHPUnit\Framework\TestCase;
-use WellingGumzan\Middleware\ProxyDetection;
+use RKA\Middleware\ProxyDetection;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 
