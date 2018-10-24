@@ -2,7 +2,7 @@
 namespace RKA\Middleware\Test;
 
 use PHPUnit\Framework\TestCase;
-use RKA\Middleware\ProxyDetection;
+use RKA\Middleware\ProxyDetectionMiddleware as ProxyDetection;
 use Zend\Diactoros\Response;
 use Zend\Diactoros\ServerRequestFactory;
 

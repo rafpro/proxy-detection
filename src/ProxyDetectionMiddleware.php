@@ -1,89 +1,34 @@
 <?php
 namespace RKA\Middleware;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\UriInterface;
 
-class ProxyDetection
+class ProxyDetectionMiddleware extends ProxyDetection
 {
-    /**
-     * List of trusted proxy IP addresses
-     *
-     * If not empty, then one of these IP addresses must be in $_SERVER['REMOTE_ADDR']
-     * in order for the proxy headers to be looked at.
-     *
-     * @var array
-     */
-    protected $trustedProxies;
-
-    /**
-     * Constructor
-     *
-     * @param array $trustedProxies   List of IP addresses of trusted proxies
-     */
-    public function __construct(array $trustedProxies = [])
-    {
-        $this->trustedProxies = $trustedProxies;
-    }
-
     /**
      * Override the request URI's scheme, host and port as determined from the proxy headers
      *
      * @param ServerRequestInterface $request PSR7 request
+     * @param ResponseInterface $response     PSR7 response
+     * @param callable $next                  Next middleware
      *
-     * @return ServerRequestInterface
+     * @return ResponseInterface
      */
-    public function processRequest(ServerRequestInterface $request)
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, $next)
     {
-        $uri = $request->getUri();
-
-        $uri = $this->processProtoHeader($request, $uri);
-        $uri = $this->processPortHeader($request, $uri);
-        $uri = $this->processHostHeader($request, $uri);
-
-        return $request->withUri($uri);
-    }
-
-    /**
-     * Override the request URI's scheme, host and port as determined from the proxy headers
-     * Only when the proxy is trusted
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return ServerRequestInterface
-     */
-    public function processRequestIfTrusted(ServerRequestInterface $request)
-    {
-        if ($this->isProxyTrusted($request)) {
-            return $request;
+        if (!$next) {
+            return $response;
         }
 
-        return $this->processRequest($request);
-    }
-
-    /**
-     * Checks if the proxy server is trusted
-     *
-     * @param ServerRequestInterface $request
-     *
-     * @return bool
-     */
-    protected function isProxyTrusted(ServerRequestInterface $request)
-    {
-        if (!empty($this->trustedProxies)) {
-            // get IP address from REMOTE_ADDR
-            $ipAddress = null;
-            $serverParams = $request->getServerParams();
-            if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIpAddress($serverParams['REMOTE_ADDR'])) {
-                $ipAddress = $serverParams['REMOTE_ADDR'];
-            }
-
-            if (!in_array($ipAddress, $this->trustedProxies)) {
-                return false;
-            }
+        if (!$this->isProxyTrusted($request)) {
+            return $response = $next($request, $response);
         }
 
-        return true;
+        $request = $this->processRequest($request);
+
+        return $response = $next($request, $response);
     }
 
     /**
