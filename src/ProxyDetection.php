@@ -74,6 +74,7 @@ class ProxyDetection
             // get IP address from REMOTE_ADDR
             $ipAddress = null;
             $serverParams = $request->getServerParams();
+
             if (isset($serverParams['REMOTE_ADDR']) && $this->isValidIpAddress($serverParams['REMOTE_ADDR'])) {
                 $ipAddress = $serverParams['REMOTE_ADDR'];
             }
@@ -98,6 +99,7 @@ class ProxyDetection
         if (filter_var($ip, FILTER_VALIDATE_IP, $flags) === false) {
             return false;
         }
+
         return true;
     }
 
@@ -110,6 +112,7 @@ class ProxyDetection
                 return $uri->withScheme($scheme);
             }
         }
+
         return $uri;
     }
 
@@ -122,6 +125,7 @@ class ProxyDetection
                 return $uri->withPort((int) $port);
             }
         }
+
         return $uri;
     }
 
@@ -143,11 +147,13 @@ class ProxyDetection
                     $host = strstr($host, ':', true);
                 }
             }
+
             $uri = $uri->withHost($host);
             if ($port) {
                 $uri = $uri->withPort($port);
             }
         }
+
         return $uri;
     }
 }
