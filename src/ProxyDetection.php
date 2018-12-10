@@ -55,10 +55,10 @@ class ProxyDetection
     public function processRequestIfTrusted(ServerRequestInterface $request)
     {
         if ($this->isProxyTrusted($request)) {
-            return $request;
+            $request = $this->processRequest($request);
         }
 
-        return $this->processRequest($request);
+        return $request;
     }
 
     /**
